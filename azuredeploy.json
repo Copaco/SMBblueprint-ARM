@@ -168,6 +168,14 @@
             },
             "type": "string",
             "defaultValue": "00000000-0000-0000-0000-000000000000"
+        },
+        "RDS":{
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "defaultValue": "Yes"
         }
     },
     "variables": {
@@ -234,25 +242,34 @@
             "customerSize": "[parameters('customerSize')]",
             "storageType": "[parameters('storageType')]",
             "OS": "[variables('OSVersion')[parameters('OSVersion')]]",
-            "osDiskSizeGB": "[variables(concat('deploymentSize-', parameters('CustomerSize'))).osDiskSizeGB]"
+            "osDiskSizeGB": "[variables(concat('deploymentSize-', parameters('CustomerSize'))).osDiskSizeGB]",
+            "dataDiskSize":"[variables(concat('deploymentSize-', parameters('CustomerSize'))).dataDiskSize]",
+            "dscProfile":"[variables('RDS')[parameters('RDS')]]"
+        },
+        "RDS":{
+            "No":"[concat('NoRds_',parameters('customerSize'))]",
+            "Yes":"[parameters('customerSize')]"
         },
         "deploymentSize-small": {
             "vmSize": "Standard_DS1_v2",
             "osDiskSizeGB":250,
             "numberOfExtraServers": 0,
-            "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-small.json')]"
+            "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-small.json')]",
+            "dataDiskSize": 150
         },
         "deploymentSize-medium": {
             "vmSize": "Standard_DS2_v2",
             "osDiskSizeGB":500,
             "numberOfExtraServers": 0,
-            "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-medium.json')]"
+            "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-medium.json')]",
+            "dataDiskSize": 375
         },
         "deploymentSize-large": {
             "vmSize": "Standard_DS4_v2",
             "osDiskSizeGB":1000,
             "numberOfExtraServers": 2,
-            "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-large.json')]"
+            "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-large.json')]",
+            "dataDiskSize": 500
         },
         "azureSqlSize": "[variables(concat('azureSqlSize', parameters('sql')))]",
         "azureSqlSizenone": {
@@ -271,17 +288,20 @@
         "vmAdditionalSizenone": {
             "template": "[concat(variables('baseTemplateUri'), 'vm/vm-none.json')]",
             "omsRecoveryServicesTemplate": "[variables(concat('omsRecoveryServicesVaultTemplate-','none')).onboarding]",
-            "vmSize": ""
+            "vmSize": "",
+            "dataDiskSize": 0
         },
         "vmAdditionalSizesmall": {
             "template": "[concat(variables('baseTemplateUri'), 'vm/vm-additional.json')]",
             "omsRecoveryServicesTemplate": "[variables(concat('omsRecoveryServicesVaultTemplate-',parameters('backupEnabled'))).onboarding]",
-            "vmSize": "Standard_DS1_v2"
+            "vmSize": "Standard_DS1_v2",
+            "dataDiskSize": 150
         },
         "vmAdditionalSizemedium": {
             "template": "[concat(variables('baseTemplateUri'), 'vm/vm-additional.json')]",
             "omsRecoveryServicesTemplate": "[variables(concat('omsRecoveryServicesVaultTemplate-',parameters('backupEnabled'))).onboarding]",
-            "vmSize": "Standard_DS2_v2"
+            "vmSize": "Standard_DS2_v2",
+            "dataDiskSize": 375
         },
         "virtualNetworkSettings": {
             "name": "[concat(variables('customerName'),'-vnet-default')]",
@@ -509,10 +529,11 @@
                             "virtualNetworkSubnetName": "[variables('virtualNetworkSettings').managementSubnetName]",
                             "adminUsername": "[variables('admin')]",
                             "domainName": "[concat(variables('customerName'), '.local')]",
-                            "dscProfile": "[parameters('customerSize')]",
+                            "dscProfile": "[variables('deploymentSettings').dscProfile]",
                             "storageType": "[parameters('storageType')]",
                             "OS": "[variables('deploymentSettings').OS]",
-                            "osDiskSizeGB":"[variables('deploymentSettings').osDiskSizeGB]"
+                            "osDiskSizeGB":"[variables('deploymentSettings').osDiskSizeGB]",
+                            "dataDiskSize":"[variables('vmAdditionalSize').dataDiskSize]"
                         }
                     },
                     "adminPassword": {

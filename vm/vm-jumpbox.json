@@ -44,8 +44,8 @@
             "compute": {
                 "virtualMachines": "2016-04-30-preview"
             },
-            "management":{
-                "monitoring":"2015-06-15"
+            "management": {
+                "monitoring": "2015-06-15"
             }
         },
         "resourceLocation": "[resourceGroup().location]",
@@ -61,8 +61,8 @@
             "publicIPAddressType": "Dynamic",
             "networkInterfaceName": "[concat('nic','-',parameters('vm').name)]",
             "vmSize": "[parameters('vm').vmSize]",
-            "DataDisk": "ADDataDisk",
-            "DataDiskSize": 1000
+            "dataDiskName": "[concat('dataDisk','-',parameters('vm').name)]",
+            "dataDiskSize": "[parameters('vm').dataDiskSize]"
         },
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vm').virtualNetworkName)]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('vm').virtualNetworkSubnetName)]"
@@ -135,7 +135,18 @@
                             "storageAccountType": "[variables('vmVariable').storageAccountType]"
                         }
                     },
-                    "dataDisks": []
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "createOption": "Empty",
+                            "managedDisk": {
+                                "storageAccountType": "[variables('vmVariable').storageAccountType]"
+                            },
+                            "caching": "None",
+                            "diskSizeGB": "[variables('vmVariable').dataDiskSize]",
+                            "name": "[variables('vmVariable').dataDiskName]"
+                        }
+                    ]
                 },
                 "networkProfile": {
                     "networkInterfaces": [

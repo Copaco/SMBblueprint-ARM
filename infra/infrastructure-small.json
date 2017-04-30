@@ -67,10 +67,11 @@
                             "virtualNetworkSubnetName": "[parameters('virtualNetworkSettings').managementSubnetName]",
                             "adminUsername": "sysadmin",
                             "domainName": "[parameters('deploymentSettings').domainName]",
-                            "dscProfile":"[parameters('deploymentSettings').customerSize]",
+                            "dscProfile":"[parameters('deploymentSettings').dscProfile]",
                             "storageType":"[parameters('deploymentSettings').storageType]",
                             "OS":"[parameters('deploymentSettings').OS]",
-                            "osDiskSizeGB":"[parameters('deploymentSettings').osDiskSizeGB]"
+                            "osDiskSizeGB":"[parameters('deploymentSettings').osDiskSizeGB]",
+                            "dataDiskSize":"[parameters('deploymentSettings').dataDiskSize]"
                         }
                     },
                     "adminPassword": {

@@ -10,7 +10,7 @@
         [string] $OMSWorkSpaceKey
     )
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory,xComputerManagement,cRemoteDesktopServices,xCredSSP,xNetworking,xPSDesiredStateConfiguration,WindowsDefender
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, xActiveDirectory,xComputerManagement,cRemoteDesktopServices,xCredSSP,xNetworking,xPSDesiredStateConfiguration,WindowsDefender,xStorage
     $DependsOnAD = ""
     $DomainCred = new-object pscredential "$domainName\$($domainAdminCredentials.UserName)",$domainAdminCredentials.Password
     $OSVersion = new-object Version ((Get-CimInstance Win32_OperatingSystem).version)
@@ -20,6 +20,34 @@
             RebootNodeIfNeeded = $true
             ActionAfterReboot = 'ContinueConfiguration'
             AllowModuleOverwrite = $true
+        }
+        # Test if raw disks exist and create volumes if they do
+        function TestDriveLetterAvailable {
+            param (
+                [string] $DriveLetter
+            )
+            if (Get-Volume -DriveLetter $DriveLetter -ErrorAction SilentlyContinue) {
+                return $false
+            } else {
+                return $true
+            }
+        }
+        $DriveLetterArray = 100..122 | ForEach-Object -Process {
+            if (TestDriveLetterAvailable -DriveLetter ([char]$_)) {
+                [char]$_
+            }
+        }
+
+        $RawDisk = Get-Disk | 
+            Where-Object -FilterScript {
+                $_.PartitionStyle -eq 'RAW'
+            }
+        
+        for ($i = 0; $i -lt ($RawDisk | Measure-Object).Count; $i++) {
+            xDisk "Disk$($RawDisk[$i].Number)" {
+                DiskNumber = $RawDisk[$i].Number
+                DriveLetter = $DriveLetterArray[$i]
+            }
         }
         # Disable defender on Server 2016 during the configuration to speed-up the operations
         if($OSVersion.Major -ge 10){

@@ -59,9 +59,9 @@
             "publicIPAddressType": "Dynamic",
             "networkInterfaceName": "[concat('nic','-',parameters('vm').name)]",
             "vmSize": "[parameters('vm').vmSize]",
-            "DataDisk": "ADDataDisk",
-            "DataDiskSize": 1000,
-            "osDiskSizeGb": "[parameters('vm').osDiskSizeGB]"
+            "osDiskSizeGb": "[parameters('vm').osDiskSizeGB]",
+            "dataDiskName": "[concat('dataDisk','-',parameters('vm').name)]",
+            "dataDiskSize": "[parameters('vm').dataDiskSize]"
         },
         "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vm').virtualNetworkName)]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('vm').virtualNetworkSubnetName)]"
@@ -130,7 +130,7 @@
                     },
                     "osDisk": {
                         "osType": "Windows",
-                        "diskSizeGB":"[variables('vmVariable').osDiskSizeGb]",
+                        "diskSizeGB": "[variables('vmVariable').osDiskSizeGb]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
                         "name": "[variables('vmVariable').osDiskName]",
@@ -138,7 +138,18 @@
                             "storageAccountType": "[variables('vmVariable').storageAccountType]"
                         }
                     },
-                    "dataDisks": []
+                    "dataDisks": [
+                        {
+                            "lun": 0,
+                            "createOption": "Empty",
+                            "managedDisk": {
+                                "storageAccountType": "[variables('vmVariable').storageAccountType]"
+                            },
+                            "caching": "None",
+                            "diskSizeGB": "[variables('vmVariable').dataDiskSize]",
+                            "name": "[variables('vmVariable').dataDiskName]"
+                        }
+                    ]
                 },
                 "networkProfile": {
                     "networkInterfaces": [
