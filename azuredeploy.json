@@ -252,21 +252,21 @@
         },
         "deploymentSize-small": {
             "vmSize": "Standard_DS1_v2",
-            "osDiskSizeGB":250,
+            "osDiskSizeGB":128,
             "numberOfExtraServers": 0,
             "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-small.json')]",
             "dataDiskSize": 150
         },
         "deploymentSize-medium": {
             "vmSize": "Standard_DS2_v2",
-            "osDiskSizeGB":500,
+            "osDiskSizeGB":512,
             "numberOfExtraServers": 0,
             "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-medium.json')]",
             "dataDiskSize": 375
         },
         "deploymentSize-large": {
             "vmSize": "Standard_DS4_v2",
-            "osDiskSizeGB":1000,
+            "osDiskSizeGB":1023,
             "numberOfExtraServers": 2,
             "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-large.json')]",
             "dataDiskSize": 500
