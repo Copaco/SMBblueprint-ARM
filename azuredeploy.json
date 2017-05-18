@@ -10,7 +10,7 @@
             }
         },
         "automationLocation": {
-            "type": "securestring",
+            "type": "string",
             "defaultValue": "[resourceGroup().location]",
             "metadata": {
                 "descipion":"The location for the automation resources"
