@@ -4,7 +4,7 @@
   "parameters": {
     "deploymentSettings": {
       "value": {
-        "vmSize": "Standard_DS2_v2",
+        "vmSize": "Standard_D2s_v3",
         "numberOfExtraServers": 2,
         "primaryVmName": "sra-01",
         "domainName" : "sbs.local"
