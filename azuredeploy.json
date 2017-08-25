@@ -258,7 +258,7 @@
             "dataDiskSize": 150
         },
         "deploymentSize-medium": {
-            "vmSize": "Standard_DS2_v2",
+            "vmSize": "Standard_D2s_v3",
             "osDiskSizeGB":512,
             "numberOfExtraServers": 0,
             "infrastructureTemplate": "[concat(variables('baseTemplateUri'), 'infra/infrastructure-medium.json')]",
